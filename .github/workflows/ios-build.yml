@@ -9,29 +9,37 @@ jobs:
     steps:
       - name: 检出源码
         uses: actions/checkout@v4
-      - name: 查看工程配置
-        run: xcodebuild -list -project 海王Box.xcodeproj
-      - name: 编译归档（不签名）
+      - name: 诊断-列出工程文件
+        run: |
+          ls -la
+          find "海王Box.xcodeproj" -type f 2>/dev/null || echo "!!! 没找到工程 !!!"
+          find . -name "*.swift" | wc -l
+      - name: 诊断-列出工程信息
+        continue-on-error: true
+        run: xcodebuild -list -project "海王Box.xcodeproj" 2>&1 || true
+      - name: 编译 App（不签名）
         run: |
           xcodebuild \
-            -project 海王Box.xcodeproj \
-            -scheme 海王Box \
+            -project "海王Box.xcodeproj" \
+            -target "海王Box" \
             -configuration Release \
-            -destination 'generic/platform=iOS' \
-            -archivePath "$PWD/build/海王Box.xcarchive" \
+            -sdk iphoneos \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
             PROVISIONING_PROFILE_SPECIFIER="" \
-            archive
-      - name: 导出未签名 IPA
+            build
+      - name: 打包 IPA
         run: |
+          APP=$(find build -name "海王Box.app" -type d 2>/dev/null | head -1)
+          if [ -z "$APP" ]; then echo "!!! 没找到 App !!!"; exit 1; fi
           mkdir -p build/Payload
-          cp -R "build/海王Box.xcarchive/Products/Applications/海王Box.app" build/Payload/
-          cd build && zip -qry 海王Box-unsigned.ipa Payload
+          cp -R "$APP" build/Payload/
+          cd build && zip -qry HaiWangBox.ipa Payload
       - name: 上传 IPA 成品
         uses: actions/upload-artifact@v4
         with:
           name: 海王Box-未签名IPA
-          path: build/海王Box-unsigned.ipa
+          path: build/HaiWangBox.ipa
+          if-no-files-found: error
           retention-days: 30
