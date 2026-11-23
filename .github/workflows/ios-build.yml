@@ -1,0 +1,39 @@
+name: 海王Box iOS 免费打包（未签名 IPA）
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: 检出源码
+        uses: actions/checkout@v4
+      - name: 选择最新 Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+      - name: 查看工程配置
+        run: xcodebuild -list -project 海王Box.xcodeproj
+      - name: 编译归档（不签名）
+        run: |
+          xcodebuild \
+            -project 海王Box.xcodeproj \
+            -scheme 海王Box \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$PWD/build/海王Box.xcarchive" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            archive
+      - name: 导出未签名 IPA
+        run: |
+          mkdir -p build/Payload
+          cp -R "build/海王Box.xcarchive/Products/Applications/海王Box.app" build/Payload/
+          cd build && zip -qry 海王Box-unsigned.ipa Payload
+      - name: 上传 IPA 成品
+        uses: actions/upload-artifact@v4
+        with:
+          name: 海王Box-未签名IPA
+          path: build/海王Box-unsigned.ipa
+          retention-days: 30
