@@ -1,45 +1,426 @@
-name: 海王Box iOS 免费打包（未签名 IPA）
-on:
-  workflow_dispatch:
-  push:
-    branches: [ main, master ]
-jobs:
-  build:
-    runs-on: macos-latest
-    steps:
-      - name: 检出源码
-        uses: actions/checkout@v4
-      - name: 诊断-列出工程文件
-        run: |
-          ls -la
-          find "海王Box.xcodeproj" -type f 2>/dev/null || echo "!!! 没找到工程 !!!"
-          find . -name "*.swift" | wc -l
-      - name: 诊断-列出工程信息
-        continue-on-error: true
-        run: xcodebuild -list -project "海王Box.xcodeproj" 2>&1 || true
-      - name: 编译 App（不签名）
-        run: |
-          xcodebuild \
-            -project "海王Box.xcodeproj" \
-            -target "海王Box" \
-            -configuration Release \
-            -sdk iphoneos \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
-            PROVISIONING_PROFILE_SPECIFIER="" \
-            build
-      - name: 打包 IPA
-        run: |
-          APP=$(find build -name "海王Box.app" -type d 2>/dev/null | head -1)
-          if [ -z "$APP" ]; then echo "!!! 没找到 App !!!"; exit 1; fi
-          mkdir -p build/Payload
-          cp -R "$APP" build/Payload/
-          cd build && zip -qry HaiWangBox.ipa Payload
-      - name: 上传 IPA 成品
-        uses: actions/upload-artifact@v4
-        with:
-          name: 海王Box-未签名IPA
-          path: build/HaiWangBox.ipa
-          if-no-files-found: error
-          retention-days: 30
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BE8567CB4D37AAD23B1B5F81 /* HaiWangBoxApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233A8CA8945D002A285F4FD2 /* HaiWangBoxApp.swift */; };
+		03C273362EB4B955542EEFCE /* MusicModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71909E7B2D06B6E6DB61B3B /* MusicModels.swift */; };
+		BD7288AACA8789072FDF0996 /* TmdbModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25FC9EC2F21163AA8D9D5F1F /* TmdbModels.swift */; };
+		428D671DAF1D4B5A27E41D03 /* VodModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB69436D1A680CB96268C372 /* VodModels.swift */; };
+		7C8BC51A607817164DCCF198 /* Anime4KProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62FC21D886A131CA956794A8 /* Anime4KProcessor.swift */; };
+		A3DEB88C3D0CB8F71F3BF3A5 /* ConfigService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DA8726922C8568BAB564D3 /* ConfigService.swift */; };
+		445189DE8FEDEF94A4AF973D /* DLNAService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6DBD6204DBA0C0C3EF0B89F /* DLNAService.swift */; };
+		86FBE56E929F6B192744E2A9 /* DanmakuEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7FC4250BFFC5BE60FCEEC4 /* DanmakuEngine.swift */; };
+		9F7C93B54F8F87C3821F47A6 /* DownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9265B6034AF034D822B3DDAD /* DownloadService.swift */; };
+		CACCB43D02753FBF7BC0A381 /* JSRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD86E0E1BA9AAB66BB05ED6 /* JSRuntime.swift */; };
+		5A6CF5B72B0D0EF954A1DA88 /* MusicRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F44A8CCDE2EFCB40D4380A8 /* MusicRepository.swift */; };
+		ABFCAD83C030B7B811607800 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70F4AD841376C41906E0946B /* NetworkService.swift */; };
+		CFAEEABB2393F5087B83EE64 /* PlaybackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179CAA47D4723C6AF737D71F /* PlaybackService.swift */; };
+		C90ABCE67D51E726E26C730D /* SpiderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E36C36E20837F9844C03B7E /* SpiderService.swift */; };
+		292321254C109E2E59B39165 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8678654D471E5C017F297F39 /* StorageService.swift */; };
+		D91677ECC17A2ECA51900635 /* SubtitleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E0EA0781595E3E4DE0D338 /* SubtitleEngine.swift */; };
+		E1A07CDBE51713A25007403F /* VolumeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C83BDA4B0D6A21832275F9C /* VolumeController.swift */; };
+		746A6E5ED94BCAD3677E7B26 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4522609E326019C2E8A8D94 /* HomeViewModel.swift */; };
+		D2E832D9DC8E68D815AE3FE7 /* LibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2BEADDDD4A45F6F30A5572 /* LibraryViewModel.swift */; };
+		B488EE047D52F13C74B6B907 /* MusicViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3771AF2573F836C377822061 /* MusicViewModel.swift */; };
+		B4FBD4B0E747E24988C7BB1C /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98CF58E06C3B5AC2B053ACF /* AppTheme.swift */; };
+		B3E35BECC1178EB8972E57D4 /* ConfigManageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3311FC9232C626EEA953B355 /* ConfigManageView.swift */; };
+		4BE4815B2A4DB6C622DC8053 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF87329F1F80F6102F683158 /* ContentView.swift */; };
+		9B2649697C97A7F6E9623C58 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11969D12E1AFDF25D05C9F5C /* DetailView.swift */; };
+		F0420643AF8E147917E97587 /* DownloadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF45E75A26C26D10FF9D3E6 /* DownloadView.swift */; };
+		5A4B6028EB413ACED0DDB9BF /* FollowingPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF71C54EC03A46402098A10 /* FollowingPage.swift */; };
+		D11D0BC8571B9D0F52663378 /* HomePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C84A144039A551B96FD44501 /* HomePage.swift */; };
+		8E7314AD4CA4391B8837A53A /* LivePlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0DFBFD1A015ABD1387EDD44 /* LivePlayView.swift */; };
+		228B71C9360D7C6C01EA43A4 /* MusicPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1A6769C3C43EBBB954C2C1 /* MusicPage.swift */; };
+		84A1C12B50C0BEBA53DA071D /* MusicPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A376280F6F1A78706BFF5F27 /* MusicPlayerView.swift */; };
+		500E4A815C003B2ABE55BDA4 /* MusicSubviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26DCBEEC49165E767581BDCF /* MusicSubviews.swift */; };
+		6966FA7803831CFF70713027 /* PlayerOverlays.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E37FD1AEF174972435DD0E /* PlayerOverlays.swift */; };
+		1D2217BCF42C267786B9E028 /* RecordsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92727A95A0E8A11BF742A555 /* RecordsPage.swift */; };
+		F98E2B4388EC3A7DA4A1A40A /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FB2C8CD946A9888106E41F3 /* SearchView.swift */; };
+		54C04BEDD95F2AE168D11119 /* SettingsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C292CB16B7687305D156E6 /* SettingsPage.swift */; };
+		3E24521235E66F67B4679A17 /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CE9192E7A01ECDDE6B34C5 /* VideoPlayerView.swift */; };
+		82B07A29B33AC53E65C708F4 /* default_config.json in Resources */ = {isa = PBXBuildFile; fileRef = 8BD48D9A205531B9B9DEA8DF /* default_config.json */; };
+		D28532833617A495259ADFFB /* epg_data.json in Resources */ = {isa = PBXBuildFile; fileRef = 3A51BBCFC613FB704AB52F99 /* epg_data.json */; };
+		CB4E13EEF47F753AC51B2744 /* ua.db in Resources */ = {isa = PBXBuildFile; fileRef = 62A7B5B5D823B07AE43B8480 /* ua.db */; };
+		6CD8DC86F86E1E0C6DD50D06 /* Anime4K in Resources */ = {isa = PBXBuildFile; fileRef = D8DBFDB35CA881B240347B77 /* Anime4K */; };
+		15CE770C848BD1AF80CBC20D /* js in Resources */ = {isa = PBXBuildFile; fileRef = 6A3161778E4EFF7543AABE98 /* js */; };
+		7C52592CFB298BEFDC580235 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 86DB401A1FF26505D9025321 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		233A8CA8945D002A285F4FD2 /* HaiWangBoxApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "HaiWangBoxApp.swift"; path = "HaiWangBoxApp.swift"; sourceTree = "<group>"; };
+		C71909E7B2D06B6E6DB61B3B /* MusicModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "MusicModels.swift"; path = "MusicModels.swift"; sourceTree = "<group>"; };
+		25FC9EC2F21163AA8D9D5F1F /* TmdbModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "TmdbModels.swift"; path = "TmdbModels.swift"; sourceTree = "<group>"; };
+		DB69436D1A680CB96268C372 /* VodModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "VodModels.swift"; path = "VodModels.swift"; sourceTree = "<group>"; };
+		62FC21D886A131CA956794A8 /* Anime4KProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Anime4KProcessor.swift"; path = "Anime4KProcessor.swift"; sourceTree = "<group>"; };
+		A9DA8726922C8568BAB564D3 /* ConfigService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "ConfigService.swift"; path = "ConfigService.swift"; sourceTree = "<group>"; };
+		B6DBD6204DBA0C0C3EF0B89F /* DLNAService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "DLNAService.swift"; path = "DLNAService.swift"; sourceTree = "<group>"; };
+		4F7FC4250BFFC5BE60FCEEC4 /* DanmakuEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "DanmakuEngine.swift"; path = "DanmakuEngine.swift"; sourceTree = "<group>"; };
+		9265B6034AF034D822B3DDAD /* DownloadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "DownloadService.swift"; path = "DownloadService.swift"; sourceTree = "<group>"; };
+		0CD86E0E1BA9AAB66BB05ED6 /* JSRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "JSRuntime.swift"; path = "JSRuntime.swift"; sourceTree = "<group>"; };
+		1F44A8CCDE2EFCB40D4380A8 /* MusicRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "MusicRepository.swift"; path = "MusicRepository.swift"; sourceTree = "<group>"; };
+		70F4AD841376C41906E0946B /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NetworkService.swift"; path = "NetworkService.swift"; sourceTree = "<group>"; };
+		179CAA47D4723C6AF737D71F /* PlaybackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "PlaybackService.swift"; path = "PlaybackService.swift"; sourceTree = "<group>"; };
+		7E36C36E20837F9844C03B7E /* SpiderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "SpiderService.swift"; path = "SpiderService.swift"; sourceTree = "<group>"; };
+		8678654D471E5C017F297F39 /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "StorageService.swift"; path = "StorageService.swift"; sourceTree = "<group>"; };
+		E1E0EA0781595E3E4DE0D338 /* SubtitleEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "SubtitleEngine.swift"; path = "SubtitleEngine.swift"; sourceTree = "<group>"; };
+		8C83BDA4B0D6A21832275F9C /* VolumeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "VolumeController.swift"; path = "VolumeController.swift"; sourceTree = "<group>"; };
+		B4522609E326019C2E8A8D94 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "HomeViewModel.swift"; path = "HomeViewModel.swift"; sourceTree = "<group>"; };
+		1B2BEADDDD4A45F6F30A5572 /* LibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "LibraryViewModel.swift"; path = "LibraryViewModel.swift"; sourceTree = "<group>"; };
+		3771AF2573F836C377822061 /* MusicViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "MusicViewModel.swift"; path = "MusicViewModel.swift"; sourceTree = "<group>"; };
+		D98CF58E06C3B5AC2B053ACF /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "AppTheme.swift"; path = "AppTheme.swift"; sourceTree = "<group>"; };
+		3311FC9232C626EEA953B355 /* ConfigManageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "ConfigManageView.swift"; path = "ConfigManageView.swift"; sourceTree = "<group>"; };
+		BF87329F1F80F6102F683158 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "ContentView.swift"; path = "ContentView.swift"; sourceTree = "<group>"; };
+		11969D12E1AFDF25D05C9F5C /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "DetailView.swift"; path = "DetailView.swift"; sourceTree = "<group>"; };
+		BFF45E75A26C26D10FF9D3E6 /* DownloadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "DownloadView.swift"; path = "DownloadView.swift"; sourceTree = "<group>"; };
+		CAF71C54EC03A46402098A10 /* FollowingPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "FollowingPage.swift"; path = "FollowingPage.swift"; sourceTree = "<group>"; };
+		C84A144039A551B96FD44501 /* HomePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "HomePage.swift"; path = "HomePage.swift"; sourceTree = "<group>"; };
+		A0DFBFD1A015ABD1387EDD44 /* LivePlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "LivePlayView.swift"; path = "LivePlayView.swift"; sourceTree = "<group>"; };
+		8C1A6769C3C43EBBB954C2C1 /* MusicPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "MusicPage.swift"; path = "MusicPage.swift"; sourceTree = "<group>"; };
+		A376280F6F1A78706BFF5F27 /* MusicPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "MusicPlayerView.swift"; path = "MusicPlayerView.swift"; sourceTree = "<group>"; };
+		26DCBEEC49165E767581BDCF /* MusicSubviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "MusicSubviews.swift"; path = "MusicSubviews.swift"; sourceTree = "<group>"; };
+		A7E37FD1AEF174972435DD0E /* PlayerOverlays.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "PlayerOverlays.swift"; path = "PlayerOverlays.swift"; sourceTree = "<group>"; };
+		92727A95A0E8A11BF742A555 /* RecordsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RecordsPage.swift"; path = "RecordsPage.swift"; sourceTree = "<group>"; };
+		9FB2C8CD946A9888106E41F3 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "SearchView.swift"; path = "SearchView.swift"; sourceTree = "<group>"; };
+		09C292CB16B7687305D156E6 /* SettingsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "SettingsPage.swift"; path = "SettingsPage.swift"; sourceTree = "<group>"; };
+		31CE9192E7A01ECDDE6B34C5 /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "VideoPlayerView.swift"; path = "VideoPlayerView.swift"; sourceTree = "<group>"; };
+		8BD48D9A205531B9B9DEA8DF /* default_config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "default_config.json"; path = "default_config.json"; sourceTree = "<group>"; };
+		3A51BBCFC613FB704AB52F99 /* epg_data.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "epg_data.json"; path = "epg_data.json"; sourceTree = "<group>"; };
+		62A7B5B5D823B07AE43B8480 /* ua.db */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ua.db"; path = "ua.db"; sourceTree = "<group>"; };
+		D8DBFDB35CA881B240347B77 /* Anime4K */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Anime4K"; path = "Anime4K"; sourceTree = "<group>"; };
+		6A3161778E4EFF7543AABE98 /* js */ = {isa = PBXFileReference; lastKnownFileType = file; name = "js"; path = "js"; sourceTree = "<group>"; };
+		86DB401A1FF26505D9025321 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Assets.xcassets"; path = "Assets.xcassets"; sourceTree = "<group>"; };
+		3AACD762DC22D4FFC888F92C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info.plist"; path = "Info.plist"; sourceTree = "<group>"; };
+		F5BF48AA40CAD7891EB709FC /* 海王Box.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "海王Box.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6BC9136C2E1B992EF374A2EA = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0AE76A8769897E0D3F4D4C32 = {
+			isa = PBXGroup;
+			children = (
+				CE882751F8B3EE4485706ED4 /* 海王Box */,
+				1BADDC1D73C1A20F347483E1 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CE882751F8B3EE4485706ED4 /* 海王Box */ = {
+			isa = PBXGroup;
+			children = (
+				8AFD5D736EB50ED14962FBA3 /* App */,
+				770A73182E90975F90A9C4DD /* Models */,
+				677AA44F4A5DEB993D9A309C /* Services */,
+				72DA36F3C25EA1573FF0FD58 /* ViewModels */,
+				B3ACC0612CD86FAC434BBD2D /* Views */,
+				8BD48D9A205531B9B9DEA8DF /* default_config.json */,
+				3A51BBCFC613FB704AB52F99 /* epg_data.json */,
+				62A7B5B5D823B07AE43B8480 /* ua.db */,
+				D8DBFDB35CA881B240347B77 /* Anime4K */,
+				6A3161778E4EFF7543AABE98 /* js */,
+				86DB401A1FF26505D9025321 /* Assets.xcassets */,
+				3AACD762DC22D4FFC888F92C /* Info.plist */,
+			);
+			path = "海王Box";
+			sourceTree = "<group>";
+		};
+		8AFD5D736EB50ED14962FBA3 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				233A8CA8945D002A285F4FD2 /* HaiWangBoxApp.swift */,
+			);
+			path = "App";
+			sourceTree = "<group>";
+		};
+		770A73182E90975F90A9C4DD /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				C71909E7B2D06B6E6DB61B3B /* MusicModels.swift */,
+				25FC9EC2F21163AA8D9D5F1F /* TmdbModels.swift */,
+				DB69436D1A680CB96268C372 /* VodModels.swift */,
+			);
+			path = "Models";
+			sourceTree = "<group>";
+		};
+		677AA44F4A5DEB993D9A309C /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				62FC21D886A131CA956794A8 /* Anime4KProcessor.swift */,
+				A9DA8726922C8568BAB564D3 /* ConfigService.swift */,
+				B6DBD6204DBA0C0C3EF0B89F /* DLNAService.swift */,
+				4F7FC4250BFFC5BE60FCEEC4 /* DanmakuEngine.swift */,
+				9265B6034AF034D822B3DDAD /* DownloadService.swift */,
+				0CD86E0E1BA9AAB66BB05ED6 /* JSRuntime.swift */,
+				1F44A8CCDE2EFCB40D4380A8 /* MusicRepository.swift */,
+				70F4AD841376C41906E0946B /* NetworkService.swift */,
+				179CAA47D4723C6AF737D71F /* PlaybackService.swift */,
+				7E36C36E20837F9844C03B7E /* SpiderService.swift */,
+				8678654D471E5C017F297F39 /* StorageService.swift */,
+				E1E0EA0781595E3E4DE0D338 /* SubtitleEngine.swift */,
+				8C83BDA4B0D6A21832275F9C /* VolumeController.swift */,
+			);
+			path = "Services";
+			sourceTree = "<group>";
+		};
+		72DA36F3C25EA1573FF0FD58 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				B4522609E326019C2E8A8D94 /* HomeViewModel.swift */,
+				1B2BEADDDD4A45F6F30A5572 /* LibraryViewModel.swift */,
+				3771AF2573F836C377822061 /* MusicViewModel.swift */,
+			);
+			path = "ViewModels";
+			sourceTree = "<group>";
+		};
+		B3ACC0612CD86FAC434BBD2D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D98CF58E06C3B5AC2B053ACF /* AppTheme.swift */,
+				3311FC9232C626EEA953B355 /* ConfigManageView.swift */,
+				BF87329F1F80F6102F683158 /* ContentView.swift */,
+				11969D12E1AFDF25D05C9F5C /* DetailView.swift */,
+				BFF45E75A26C26D10FF9D3E6 /* DownloadView.swift */,
+				CAF71C54EC03A46402098A10 /* FollowingPage.swift */,
+				C84A144039A551B96FD44501 /* HomePage.swift */,
+				A0DFBFD1A015ABD1387EDD44 /* LivePlayView.swift */,
+				8C1A6769C3C43EBBB954C2C1 /* MusicPage.swift */,
+				A376280F6F1A78706BFF5F27 /* MusicPlayerView.swift */,
+				26DCBEEC49165E767581BDCF /* MusicSubviews.swift */,
+				A7E37FD1AEF174972435DD0E /* PlayerOverlays.swift */,
+				92727A95A0E8A11BF742A555 /* RecordsPage.swift */,
+				9FB2C8CD946A9888106E41F3 /* SearchView.swift */,
+				09C292CB16B7687305D156E6 /* SettingsPage.swift */,
+				31CE9192E7A01ECDDE6B34C5 /* VideoPlayerView.swift */,
+			);
+			path = "Views";
+			sourceTree = "<group>";
+		};
+		1BADDC1D73C1A20F347483E1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F5BF48AA40CAD7891EB709FC /* 海王Box.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		42AEFBAE01D2DFD981F7DA7D /* 海王Box */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3F4B69E1C2D7780B6DE87DC8 /* Build configuration list for PBXNativeTarget "海王Box" */;
+			buildPhases = (
+				F680599402C0D80E245DE801 /* Sources */,
+				6BC9136C2E1B992EF374A2EA /* Frameworks */,
+				781C774F390DF12CD292A30B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "海王Box";
+			productName = "海王Box";
+			productReference = F5BF48AA40CAD7891EB709FC /* 海王Box.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		46F86FAA6BBF9AC94A7E4595 /* Project object */ = {
+			isa = PBXProject;
+			attributes = { LastUpgradeCheck = 1500; TargetAttributes = { 42AEFBAE01D2DFD981F7DA7D = { CreatedOnToolsVersion = 15.0; }; }; };
+			buildConfigurationList = 1EA27E9E5E6EF12D4FFF00B1 /* Build configuration list for PBXProject "海王Box" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = zh_CN;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				zh_CN,
+			);
+			mainGroup = 0AE76A8769897E0D3F4D4C32;
+			productRefGroup = 1BADDC1D73C1A20F347483E1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				42AEFBAE01D2DFD981F7DA7D /* 海王Box */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F680599402C0D80E245DE801 = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE8567CB4D37AAD23B1B5F81 /* in Sources */,
+				03C273362EB4B955542EEFCE /* in Sources */,
+				BD7288AACA8789072FDF0996 /* in Sources */,
+				428D671DAF1D4B5A27E41D03 /* in Sources */,
+				7C8BC51A607817164DCCF198 /* in Sources */,
+				A3DEB88C3D0CB8F71F3BF3A5 /* in Sources */,
+				445189DE8FEDEF94A4AF973D /* in Sources */,
+				86FBE56E929F6B192744E2A9 /* in Sources */,
+				9F7C93B54F8F87C3821F47A6 /* in Sources */,
+				CACCB43D02753FBF7BC0A381 /* in Sources */,
+				5A6CF5B72B0D0EF954A1DA88 /* in Sources */,
+				ABFCAD83C030B7B811607800 /* in Sources */,
+				CFAEEABB2393F5087B83EE64 /* in Sources */,
+				C90ABCE67D51E726E26C730D /* in Sources */,
+				292321254C109E2E59B39165 /* in Sources */,
+				D91677ECC17A2ECA51900635 /* in Sources */,
+				E1A07CDBE51713A25007403F /* in Sources */,
+				746A6E5ED94BCAD3677E7B26 /* in Sources */,
+				D2E832D9DC8E68D815AE3FE7 /* in Sources */,
+				B488EE047D52F13C74B6B907 /* in Sources */,
+				B4FBD4B0E747E24988C7BB1C /* in Sources */,
+				B3E35BECC1178EB8972E57D4 /* in Sources */,
+				4BE4815B2A4DB6C622DC8053 /* in Sources */,
+				9B2649697C97A7F6E9623C58 /* in Sources */,
+				F0420643AF8E147917E97587 /* in Sources */,
+				5A4B6028EB413ACED0DDB9BF /* in Sources */,
+				D11D0BC8571B9D0F52663378 /* in Sources */,
+				8E7314AD4CA4391B8837A53A /* in Sources */,
+				228B71C9360D7C6C01EA43A4 /* in Sources */,
+				84A1C12B50C0BEBA53DA071D /* in Sources */,
+				500E4A815C003B2ABE55BDA4 /* in Sources */,
+				6966FA7803831CFF70713027 /* in Sources */,
+				1D2217BCF42C267786B9E028 /* in Sources */,
+				F98E2B4388EC3A7DA4A1A40A /* in Sources */,
+				54C04BEDD95F2AE168D11119 /* in Sources */,
+				3E24521235E66F67B4679A17 /* in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXResourcesBuildPhase section */
+		781C774F390DF12CD292A30B = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				82B07A29B33AC53E65C708F4 /* in Resources */,
+				D28532833617A495259ADFFB /* in Resources */,
+				CB4E13EEF47F753AC51B2744 /* in Resources */,
+				6CD8DC86F86E1E0C6DD50D06 /* in Resources */,
+				15CE770C848BD1AF80CBC20D /* in Resources */,
+				7C52592CFB298BEFDC580235 /* in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		34C4193929ED6345A39CFEFC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		5AB67FFA503C3D3FFD914471 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		86F6C47B609D0F933576C1F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = "海王Box/Info.plist";
+				GENERATE_INFOPLIST_FILE = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.avbox.haiwang.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2CDABD9549033F04AAB99916 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = "海王Box/Info.plist";
+				GENERATE_INFOPLIST_FILE = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.avbox.haiwang.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1EA27E9E5E6EF12D4FFF00B1 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				34C4193929ED6345A39CFEFC /* Debug */,
+				5AB67FFA503C3D3FFD914471 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3F4B69E1C2D7780B6DE87DC8 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				86F6C47B609D0F933576C1F8 /* Debug */,
+				2CDABD9549033F04AAB99916 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 46F86FAA6BBF9AC94A7E4595 /* Project object */;
+}
