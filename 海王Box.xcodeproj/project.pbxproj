@@ -95,7 +95,7 @@
 		6A3161778E4EFF7543AABE98 /* js */ = {isa = PBXFileReference; lastKnownFileType = file; name = "js"; path = "js"; sourceTree = "<group>"; };
 		86DB401A1FF26505D9025321 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Assets.xcassets"; path = "Assets.xcassets"; sourceTree = "<group>"; };
 		3AACD762DC22D4FFC888F92C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info.plist"; path = "Info.plist"; sourceTree = "<group>"; };
-		F5BF48AA40CAD7891EB709FC /* 海王Box.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 海王Box.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F5BF48AA40CAD7891EB709FC /* 海王Box.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "海王Box.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,7 +133,7 @@
 				86DB401A1FF26505D9025321 /* Assets.xcassets */,
 				3AACD762DC22D4FFC888F92C /* Info.plist */,
 			);
-			path = 海王Box;
+			path = "海王Box";
 			sourceTree = "<group>";
 		};
 		8AFD5D736EB50ED14962FBA3 /* App */ = {
@@ -230,8 +230,8 @@
 			);
 			dependencies = (
 			);
-			name = 海王Box;
-			productName = 海王Box;
+			name = "海王Box";
+			productName = "海王Box";
 			productReference = F5BF48AA40CAD7891EB709FC /* 海王Box.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -366,7 +366,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = 海王Box/Info.plist;
+				INFOPLIST_FILE = "海王Box/Info.plist";
 				GENERATE_INFOPLIST_FILE = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
@@ -386,7 +386,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = 海王Box/Info.plist;
+				INFOPLIST_FILE = "海王Box/Info.plist";
 				GENERATE_INFOPLIST_FILE = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
