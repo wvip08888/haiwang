@@ -1,0 +1,60 @@
+# Codemagic CI/CD —— 海王Box iOS（默认直接出 IPA，使用你自己的 Apple 签名）
+# 文档：https://docs.codemagic.io/yaml-quick-start/building-a-native-ios-app/
+workflows:
+  ios-ipa:
+    name: 海王Box iOS 导出 IPA
+    max_build_duration: 90
+    instance_type: mac_mini_m2
+
+    # ===== 签名配置 =====
+    # 1. 在 Codemagic 网页端 Settings → Integrations → App Store Connect 添加你的 API 密钥，
+    #    并把下面的 "app-store-connect" 改成你给该集成起的名字。
+    # 2. 确认 Bundle ID com.avbox.haiwang.ios 已在你的 Apple Developer 后台注册
+    #    （Codemagic 会自动创建所需的 App ID / 描述文件）。
+    integrations:
+      app_store_connect: "<<请填：你的集成名>>"
+
+    environment:
+      xcode: latest
+      ios_signing:
+        distribution_type: app_store   # 上架/TestFlight 用 app_store；自装机可改 ad_hoc 或 development
+        bundle_identifier: com.avbox.haiwang.ios
+      vars:
+        XCODE_PROJECT: 海王Box.xcodeproj
+        XCODE_SCHEME: 海王Box
+        BUNDLE_ID: com.avbox.haiwang.ios
+
+    scripts:
+      # 1. 初始化签名钥匙串
+      - name: 初始化钥匙串
+        script: keychain initialize
+
+      # 2. 从 Apple Developer 拉取签名证书与描述文件（自动创建）
+      - name: 获取签名文件
+        script: |
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --create
+
+      # 3. 把描述文件安装到工程
+      - name: 配置描述文件
+        script: xcode-project use-profiles
+
+      # 4. 归档并导出 IPA（Codemagic 官方工具，自动处理签名与 exportOptions）
+      - name: 构建 IPA
+        script: |
+          xcode-project build-ipa \
+            --project "$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME"
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      email:
+        recipients:
+          - "<<请填：你的邮箱>>"   # 构建完成/失败会收到通知
+        notify:
+          success: true
+          failure: true

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- 分发方式：app-store / ad-hoc / development / enterprise，按需修改 -->
+	<key>method</key>
+	<string>app-store</string>
+	<!-- 改成你的 Apple Developer Team ID -->
+	<key>teamID</key>
+	<string>请填：你的TeamID（10位字母数字）</string>
+	<key>uploadSymbols</key>
+	<true/>
+	<key>uploadBitcode</key>
+	<false/>
+	<key>compileBitcode</key>
+	<false/>
+</dict>
+</plist>
